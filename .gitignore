@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+._*
+
+# Logs
+*.log
+logs/
+
+# Audio/Video files (input and output)
+*.wav
+*.mp3
+*.mp4
+*.m4a
+*.flac
+*.aac
+*.ogg
+*.webm
+
+# Transcription output files
+data/input/
+data/output/
+*.srt
+*.txt
+*.vtt
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  transcripter:
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./data:/app/data:rw        # Local data processing
+      - ./src:/app/src:ro          # Source code (development)
+    environment:
+      - TRANSCRIPTER_LOG_LEVEL=DEBUG
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"  # For future web interface
+    command: ["transcripter", "--help"]
+
+volumes:
+  transcripter_data:
+

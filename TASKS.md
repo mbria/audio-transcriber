@@ -1,0 +1,45 @@
+# Project Tasks
+
+- [x] Project setup and containerization
+  - [x] Initialize uv project with pyproject.toml
+  - [x] Create docker-compose.yml and Dockerfile
+  - [x] Set up justfile with basic recipes
+- [x] AssemblyAI SDK integration
+  - [x] Research AssemblyAI features for speaker diarization
+  - [x] Add AssemblyAI SDK dependency
+- [x] Configuration management
+  - [x] Set up Pydantic configuration with environment variables
+  - [x] Add structured logging with correlation IDs
+- [x] Core transcription service
+  - [x] Implement TranscripterService with speaker diarization
+  - [x] Add robust error handling with retries
+  - [x] Support multiple output formats (txt, srt)
+- [x] Data models
+  - [x] Create SpeakerUtterance and TranscriptionResult models
+  - [x] Add format conversion methods (txt, srt)
+- [x] Command-line interface
+  - [x] Create CLI with argument parsing
+  - [x] Add input validation and error handling
+  - [x] Support verbose logging and custom API keys
+- [x] Testing infrastructure
+  - [x] Create comprehensive test suite
+  - [x] Add tests for models, config, and service
+  - [x] Achieve >80% code coverage
+- [x] Documentation
+  - [x] Create comprehensive README with usage examples
+  - [x] Add API integration examples
+  - [x] Document configuration options
+- [x] Enhanced CLI and justfile usability
+  - [x] Make output file optional with automatic naming
+  - [x] Use TRANSCRIPTER_OUTPUT_DIR for default output location
+  - [x] Update justfile with named parameters and optional output file
+  - [x] Remove API key parameter (assume proper .env setup)
+  - [x] Fix justfile syntax errors and conditional logic
+  - [x] Fix file path quoting for filenames with spaces
+  - [x] Append format to output filename to avoid overwriting different formats
+- [ ] Final validation and testing
+  - [ ] Run full test suite with coverage
+  - [ ] Verify linting and type checking
+  - [ ] Test CLI functionality with sample audio
+  - [ ] Validate Docker container builds
+
