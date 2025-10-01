@@ -43,3 +43,28 @@
   - [ ] Test CLI functionality with sample audio
   - [ ] Validate Docker container builds
 
+## Speaker Naming Feature
+
+- [x] Interactive speaker naming system
+  - [x] Create SpeakerNamingService for managing speaker identification and naming
+  - [x] Implement speaker counting and analysis logic
+  - [x] Add interactive prompt system for naming speakers with context preview
+  - [x] Support "more" command to show additional speaker context
+  - [x] Implement text replacement functionality for speaker names
+  - [x] Create comprehensive unit tests for the speaker naming service
+  - [x] Integrate speaker naming into main transcription workflow as default behavior
+
+## Speaker Naming Bug Fixes
+
+- [x] Fix speaker naming workflow issues
+  - [x] Add initial Y/n prompt to ask if user wants to rename speakers
+  - [x] Fix "more" command to show next utterances for each speaker (not same ones)
+  - [x] Fix "set of 3" logic for first speaker (current + next 2, not before/current/after)
+  - [x] Update unit tests to cover the corrected behavior
+
+## Speaker Naming UX Improvements
+
+- [x] Enhance user experience
+  - [x] Improve confirmation prompt format to "rename Speaker A to [new name]?"
+  - [x] Increase context display from 100 to 200 characters for better readability
+

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .config import get_config
 from .logging import configure_logging, get_logger
+from .speaker_naming_service import SpeakerNamingService
 from .transcription_service import TranscripterService, TranscriptionError
 
 logger = get_logger(__name__)
@@ -21,6 +22,8 @@ Examples:
   transcripter meeting.mp4 transcript.txt
   transcripter audio.wav output.srt --format srt
   transcripter /path/to/audio.mp3 /path/to/output.txt --verbose
+
+Note: For multi-speaker audio, you'll be prompted to name speakers after transcription.
         """
     )
 
@@ -31,7 +34,7 @@ Examples:
     )
 
     parser.add_argument(
-        "output_file", 
+        "output_file",
         type=Path,
         nargs="?",
         help="Path to save the transcript file (optional, defaults to input filename with format extension in output directory)"
@@ -49,6 +52,7 @@ Examples:
         action="store_true",
         help="Enable verbose logging"
     )
+
 
 
     parser.add_argument(
@@ -118,6 +122,29 @@ def main() -> None:
         # Save the transcript
         print(f"Saving transcript to {args.output_file}...")
         service.save_transcript(result, args.output_file, args.format)
+
+        # Handle speaker naming as part of default workflow
+        speakers_detected = len({utt.speaker for utt in result.utterances})
+        if speakers_detected > 1:  # Only prompt if multiple speakers detected
+            print(f"\nFound {speakers_detected} speakers in the transcript.")
+            rename_choice = input("Would you like to name the speakers? [Y/n]: ").strip().lower()
+
+            if rename_choice in ['', 'y', 'yes']:
+                print("\n" + "="*50)
+                print("SPEAKER NAMING")
+                print("="*50)
+
+                try:
+                    naming_service = SpeakerNamingService(args.output_file)
+                    if naming_service.run_interactive_naming():
+                        print("Speaker naming completed successfully!")
+                    else:
+                        print("Speaker naming was not completed.")
+                except Exception as e:
+                    print(f"Error during speaker naming: {e}", file=sys.stderr)
+                    logger.error("Speaker naming failed", error=str(e))
+            else:
+                print("Skipping speaker naming.")
 
         # Print summary
         print("\nTranscription completed successfully!")

@@ -5,6 +5,7 @@ A speech-to-text utility with speaker diarization using AssemblyAI. Transcribe a
 ## Features
 
 - **Speaker Diarization**: Automatically identifies and attributes speech to different speakers
+- **Interactive Speaker Naming**: Rename speakers with contextual prompts for better readability
 - **Multiple Formats**: Supports MP3, MP4, WAV, M4A, AAC, FLAC, OGG, and WMA files
 - **Output Formats**: Generate transcripts in plain text or SRT subtitle format
 - **Robust Error Handling**: Built-in retry logic and comprehensive error reporting
@@ -52,6 +53,24 @@ uv run transcripter audio.wav --format srt
 # Verbose output for debugging
 uv run transcripter audio.mp3 --verbose
 ```
+
+### Speaker Naming
+
+For multi-speaker audio, you'll be prompted to rename speakers after transcription:
+
+```bash
+# Transcription will automatically prompt for speaker naming when multiple speakers are detected
+uv run transcripter meeting.mp4
+
+# Example workflow:
+# 1. Transcribe audio
+# 2. System detects: "Found 2 speakers in the transcript."
+# 3. Prompt: "Would you like to name the speakers? [Y/n]:"
+# 4. If yes, shows context and prompts for each speaker name
+# 5. Type "more" to see additional context for better identification
+```
+
+The system shows contextual snippets to help identify speakers and allows you to rename them for better readability in the final transcript.
 
 ## Development
 

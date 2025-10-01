@@ -17,7 +17,8 @@ class TestTranscripterConfig:
 
     def test_default_config(self):
         """Test default configuration values."""
-        config = TranscripterConfig()
+        # Use test.env file with known values
+        config = TranscripterConfig(_env_file="test.env")
 
         assert config.assemblyai_api_key == ""
         assert config.log_level == "INFO"
@@ -45,10 +46,10 @@ class TestTranscripterConfig:
     def test_output_dir_creation(self):
         """Test that output directory is created during initialization."""
         test_dir = Path("./test_output_dir")
-        
+
         # Mock the mkdir method
         with patch.object(Path, 'mkdir') as mock_mkdir:
-            config = TranscripterConfig(output_dir=test_dir)
+            TranscripterConfig(output_dir=test_dir)
             mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
 
 
@@ -71,7 +72,7 @@ class TestCorrelationID:
         set_correlation_id("")
         # Get a new correlation ID
         cid = get_correlation_id()
-        
+
         # Should generate a new one
         assert len(cid) == 36
 
