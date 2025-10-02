@@ -40,7 +40,7 @@ def configure_logging(log_level: str = "INFO") -> None:
     )
 
 
-def add_correlation_id(logger: Any, method_name: str, event_dict: dict[str, Any]) -> dict[str, Any]:
+def add_correlation_id(logger: Any, method_name: str, event_dict: Any) -> Any:
     """Add correlation ID to log events."""
     event_dict["correlation_id"] = get_correlation_id()
     return event_dict

@@ -16,6 +16,7 @@ transcribe-verbose input_file output_file='':
     uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --verbose
 
 
+
 # Show help and usage examples
 help:
     uv run transcripter --help

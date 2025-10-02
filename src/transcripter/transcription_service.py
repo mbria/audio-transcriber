@@ -92,7 +92,9 @@ class TranscripterService:
             while transcript.status not in [aai.TranscriptStatus.completed, aai.TranscriptStatus.error]:
                 logger.debug("Transcription in progress", status=transcript.status)
                 time.sleep(1)
-                transcript = transcriber.get_transcript(transcript.id)
+                if transcript.id is None:
+                    raise TranscriptionError("Transcript ID is None")
+                transcript = aai.Transcript.get_by_id(transcript.id)
 
             if transcript.status == aai.TranscriptStatus.error:
                 raise TranscriptionError(f"Transcription failed: {transcript.error}")
@@ -132,7 +134,7 @@ class TranscripterService:
         if hasattr(transcript, 'utterances') and transcript.utterances:
             for utterance in transcript.utterances:
                 speaker_utterance = SpeakerUtterance(
-                    speaker=utterance.speaker,
+                    speaker=utterance.speaker or "Unknown",
                     text=utterance.text,
                     start=utterance.start,
                     end=utterance.end,
