@@ -384,6 +384,25 @@ except SpecificError as e:
 - **Error messages**: Use business-relevant language
 - **Documentation**: Keep professional and tool-agnostic
 
+### Git Commit Conventions
+- **Follow conventional commit format**: `type(scope): description`
+- **Standard types**:
+  - `feat:` - New features (usually includes docs and tests)
+  - `fix:` - Bug fixes
+  - `docs:` - Documentation changes only
+  - `style:` - Code style changes (formatting, etc.)
+  - `refactor:` - Code refactoring without behavior changes
+  - `test:` - Adding or updating tests
+  - `chore:` - Maintenance tasks, dependency updates
+- **Commit message guidelines**:
+  - **Outcome/result oriented** - Focus on what was achieved, not implementation details
+  - **Present tense** - "Add feature" not "Added feature"
+  - **Lowercase** - No capital letters after the colon
+  - **No period** - Don't end with a period
+  - **50 char limit** - Keep the subject line under 50 characters
+- **Multiple commits**: If changes span multiple types, break into separate commits
+- **Exception**: `feat:` commits often include associated `docs:` and `test:` changes in the same commit
+
 ## MCP Integration
 
 ### Enhanced Development Workflow
