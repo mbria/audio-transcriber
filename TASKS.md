@@ -37,6 +37,7 @@
   - [x] Fix justfile syntax errors and conditional logic
   - [x] Fix file path quoting for filenames with spaces
   - [x] Append format to output filename to avoid overwriting different formats
+  - [x] Strip outer quotes from input file paths to handle shell-quoted arguments
 - [ ] Final validation and testing
   - [ ] Run full test suite with coverage
   - [ ] Verify linting and type checking

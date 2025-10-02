@@ -12,6 +12,25 @@ from .transcription_service import TranscripterService, TranscriptionError
 logger = get_logger(__name__)
 
 
+def strip_outer_quotes(text: str) -> str:
+    """Strip outer quotes from a string if present."""
+    if not text:
+        return text
+    
+    # Check for outer quotes and strip them
+    if len(text) >= 2:
+        if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+            return text[1:-1]
+    
+    return text
+
+
+def path_with_quote_stripping(path_str: str) -> Path:
+    """Convert string to Path, stripping outer quotes if present."""
+    cleaned_path = strip_outer_quotes(path_str)
+    return Path(cleaned_path)
+
+
 def create_parser() -> argparse.ArgumentParser:
     """Create command-line argument parser."""
     parser = argparse.ArgumentParser(
@@ -29,13 +48,13 @@ Note: For multi-speaker audio, you'll be prompted to name speakers after transcr
 
     parser.add_argument(
         "input_file",
-        type=Path,
+        type=path_with_quote_stripping,
         help="Path to the input audio/video file"
     )
 
     parser.add_argument(
         "output_file",
-        type=Path,
+        type=path_with_quote_stripping,
         nargs="?",
         help="Path to save the transcript file (optional, defaults to input filename with format extension in output directory)"
     )
