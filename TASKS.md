@@ -69,3 +69,11 @@
   - [x] Improve confirmation prompt format to "rename Speaker A to [new name]?"
   - [x] Increase context display from 100 to 200 characters for better readability
 
+## Single Speaker Support Enhancement
+
+- [x] Support single speaker recordings (e.g., training sessions)
+  - [x] Update CLI logic to prompt for single speaker naming with custom message
+  - [x] Enhance SpeakerNamingService messaging for single speaker scenarios
+  - [x] Add comprehensive tests for single speaker functionality
+  - [x] Ensure backward compatibility with multi-speaker recordings
+

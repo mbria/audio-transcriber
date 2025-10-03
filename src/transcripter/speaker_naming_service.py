@@ -221,7 +221,10 @@ class SpeakerNamingService:
             return False
 
         sorted_speakers = sorted(self.speakers.keys())
-        print(f"\nFound {len(sorted_speakers)} speakers: {', '.join(sorted_speakers)}")
+        if len(sorted_speakers) == 1:
+            print(f"\nFound 1 speaker: {sorted_speakers[0]}")
+        else:
+            print(f"\nFound {len(sorted_speakers)} speakers: {', '.join(sorted_speakers)}")
 
         # Process each speaker
         for i, speaker_id in enumerate(sorted_speakers):
