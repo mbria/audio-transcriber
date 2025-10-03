@@ -86,6 +86,24 @@ Speaker B: This should be detected
         assert len(self.service.speakers) == 2
         assert len(self.service.utterances) == 2
 
+    def test_analyze_transcript_single_speaker(self):
+        """Test transcript analysis with single speaker."""
+        transcript_content = """Speaker A: Hello, welcome to today's training session.
+Speaker A: Today we'll be covering the basics of our system.
+Speaker A: Let's start with an overview of the main features.
+"""
+
+        with patch("builtins.open", mock_open(read_data=transcript_content)):
+            result = self.service.analyze_transcript()
+
+        assert result is True
+        assert len(self.service.speakers) == 1
+        assert "Speaker A" in self.service.speakers
+        assert len(self.service.utterances) == 3
+        assert self.service.utterances[0] == ("Speaker A", "Hello, welcome to today's training session.")
+        assert self.service.utterances[1] == ("Speaker A", "Today we'll be covering the basics of our system.")
+        assert self.service.utterances[2] == ("Speaker A", "Let's start with an overview of the main features.")
+
     def test_get_speaker_context_first_speaker(self):
         """Test getting context for the first speaker in the transcript."""
         # Set up utterances
@@ -337,6 +355,25 @@ Speaker B: This should be detected
         """Test speaker naming with no utterances."""
         result = self.service.process_speaker_naming()
         assert result is False
+
+    def test_process_speaker_naming_single_speaker(self, capsys):
+        """Test speaker naming with single speaker."""
+        # Set up single speaker
+        self.service.speakers = {"Speaker A": "Speaker A"}
+        self.service.utterances = [
+            ("Speaker A", "First utterance"),
+            ("Speaker A", "Second utterance"),
+        ]
+
+        with patch('builtins.input', side_effect=["Bob", "y"]):
+            result = self.service.process_speaker_naming()
+
+        assert result is True
+        assert self.service.speakers["Speaker A"] == "Bob"
+        
+        # Check that the single speaker message was displayed
+        captured = capsys.readouterr()
+        assert "Found 1 speaker: Speaker A" in captured.out
 
     def test_apply_speaker_names_success(self):
         """Test successful application of speaker names."""

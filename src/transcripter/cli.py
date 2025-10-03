@@ -144,9 +144,13 @@ def main() -> None:
 
         # Handle speaker naming as part of default workflow
         speakers_detected = len({utt.speaker for utt in result.utterances})
-        if speakers_detected > 1:  # Only prompt if multiple speakers detected
-            print(f"\nFound {speakers_detected} speakers in the transcript.")
-            rename_choice = input("Would you like to name the speakers? [Y/n]: ").strip().lower()
+        if speakers_detected > 0:  # Prompt for any number of speakers
+            if speakers_detected == 1:
+                print(f"\nThere is only one speaker identified, would you like to customize the name label?")
+                rename_choice = input("Would you like to name the speaker? [Y/n]: ").strip().lower()
+            else:
+                print(f"\nFound {speakers_detected} speakers in the transcript.")
+                rename_choice = input("Would you like to name the speakers? [Y/n]: ").strip().lower()
 
             if rename_choice in ['', 'y', 'yes']:
                 print("\n" + "="*50)
