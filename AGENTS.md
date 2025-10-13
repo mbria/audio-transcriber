@@ -387,7 +387,7 @@ except SpecificError as e:
 ### Git Commit Conventions
 - **Follow conventional commit format**: `type(scope): description`
 - **Standard types**:
-  - `feat:` - New features (usually includes docs and tests)
+  - `feat:` - New features
   - `fix:` - Bug fixes
   - `docs:` - Documentation changes only
   - `style:` - Code style changes (formatting, etc.)
@@ -400,8 +400,19 @@ except SpecificError as e:
   - **Lowercase** - No capital letters after the colon
   - **No period** - Don't end with a period
   - **50 char limit** - Keep the subject line under 50 characters
+- **What NOT to include in commit messages**:
+  - Don't list technical implementation details (Git shows file changes)
+  - Don't mention documentation updates (unless it's a `docs:` commit)
+  - Don't mention test updates (unless it's a `test:` commit)
+  - Don't mention linting/formatting (unless it's a `style:` commit)
+  - Don't mention justfile/Dockerfile updates (unless it's a `chore:` commit)
+  - Don't provide a play-by-play of code changes
+- **Good commit message examples**:
+  - `feat: add optional sentiment analysis` (not "Add SentimentResult model, update CLI, add tests...")
+  - `fix: correct audio duration display` (not "Remove division by 1000, update tests...")
+  - `feat: enable speaker naming in transcripts` (not "Create SpeakerNamingService, add prompts, update CLI...")
+- **Body text (optional)**: Brief explanation of why/what the feature does, not how it was implemented
 - **Multiple commits**: If changes span multiple types, break into separate commits
-- **Exception**: `feat:` commits often include associated `docs:` and `test:` changes in the same commit
 
 ## MCP Integration
 
