@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from transcripter.models import SpeakerUtterance, TranscriptionResult
+from transcripter.models import SentimentResult, SpeakerUtterance, TranscriptionResult
 
 
 class TestSpeakerUtterance:
@@ -115,4 +115,151 @@ class TestTranscriptionResult:
         for ms, expected in test_cases:
             result = TranscriptionResult._ms_to_srt_time(ms)
             assert result == expected
+
+
+class TestSentimentResult:
+    """Test SentimentResult model."""
+
+    def test_sentiment_result_creation(self):
+        """Test creating a sentiment result."""
+        sentiment = SentimentResult(
+            text="This is great!",
+            sentiment="POSITIVE",
+            confidence=0.92,
+            start=1000,
+            end=3000,
+            speaker="A"
+        )
+
+        assert sentiment.text == "This is great!"
+        assert sentiment.sentiment == "POSITIVE"
+        assert sentiment.confidence == 0.92
+        assert sentiment.start == 1000
+        assert sentiment.end == 3000
+        assert sentiment.speaker == "A"
+
+    def test_sentiment_result_without_speaker(self):
+        """Test creating sentiment result without speaker."""
+        sentiment = SentimentResult(
+            text="This is neutral.",
+            sentiment="NEUTRAL",
+            confidence=0.88,
+            start=1000,
+            end=3000
+        )
+
+        assert sentiment.speaker is None
+
+
+class TestTranscriptionResultWithSentiment:
+    """Test TranscriptionResult with sentiment analysis."""
+
+    def test_transcription_result_with_sentiment(self):
+        """Test creating transcription result with sentiment analysis."""
+        utterances = [
+            SpeakerUtterance(
+                speaker="A",
+                text="This is great!",
+                start=1000,
+                end=3000
+            )
+        ]
+
+        sentiments = [
+            SentimentResult(
+                text="This is great!",
+                sentiment="POSITIVE",
+                confidence=0.92,
+                start=1000,
+                end=3000,
+                speaker="A"
+            )
+        ]
+
+        result = TranscriptionResult(
+            utterances=utterances,
+            audio_file=Path("test.mp3"),
+            sentiment_results=sentiments
+        )
+
+        assert len(result.sentiment_results) == 1
+        assert result.sentiment_results[0].sentiment == "POSITIVE"
+        assert result.sentiment_results[0].confidence == 0.92
+
+    def test_to_transcript_text_with_sentiment(self):
+        """Test converting to transcript text with sentiment analysis."""
+        utterances = [
+            SpeakerUtterance(
+                speaker="A",
+                text="This is great!",
+                start=1000,
+                end=3000
+            ),
+            SpeakerUtterance(
+                speaker="B",
+                text="I'm not sure about that.",
+                start=3500,
+                end=6000
+            )
+        ]
+
+        sentiments = [
+            SentimentResult(
+                text="This is great!",
+                sentiment="POSITIVE",
+                confidence=0.92,
+                start=1000,
+                end=3000,
+                speaker="A"
+            ),
+            SentimentResult(
+                text="I'm not sure about that.",
+                sentiment="NEGATIVE",
+                confidence=0.85,
+                start=3500,
+                end=6000,
+                speaker="B"
+            )
+        ]
+
+        result = TranscriptionResult(
+            utterances=utterances,
+            audio_file=Path("test.mp3"),
+            sentiment_results=sentiments
+        )
+
+        text = result.to_transcript_text()
+
+        # Check that utterances are present
+        assert "Speaker A: This is great!" in text
+        assert "Speaker B: I'm not sure about that." in text
+
+        # Check that sentiment section is present
+        assert "SENTIMENT ANALYSIS" in text
+        assert "[POSITIVE]" in text
+        assert "[NEGATIVE]" in text
+        assert "(confidence: 0.92)" in text
+        assert "(confidence: 0.85)" in text
+
+    def test_to_transcript_text_without_sentiment(self):
+        """Test transcript text without sentiment analysis (default behavior)."""
+        utterances = [
+            SpeakerUtterance(
+                speaker="A",
+                text="Hello world",
+                start=1000,
+                end=3000
+            )
+        ]
+
+        result = TranscriptionResult(
+            utterances=utterances,
+            audio_file=Path("test.mp3")
+        )
+
+        text = result.to_transcript_text()
+
+        # Should not have sentiment section
+        assert "SENTIMENT ANALYSIS" not in text
+        assert "Speaker A: Hello world" in text
 

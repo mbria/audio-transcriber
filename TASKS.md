@@ -101,3 +101,20 @@
   - [x] Add minutes display alongside seconds for better readability
   - [x] Verify all 78 tests pass with 90% coverage
 
+## Sentiment Analysis Feature
+
+- [x] Add optional sentiment analysis support
+  - [x] Create SentimentResult model for sentiment data (text, sentiment, confidence, timestamps, speaker)
+  - [x] Extend TranscriptionResult to support optional sentiment_results field
+  - [x] Update to_transcript_text() to include sentiment analysis section when available
+  - [x] Update transcription service to accept enable_sentiment_analysis parameter
+  - [x] Process sentiment_analysis_results from AssemblyAI API
+  - [x] Add --sentiment flag to CLI
+  - [x] Display sentiment analysis summary in CLI output (counts by sentiment type)
+  - [x] Parameterize justfile recipes with optional sentiment='true' parameter
+  - [x] Add convenience transcribe-sentiment recipe for easier usage
+  - [x] Create comprehensive test suite for sentiment analysis functionality
+  - [x] Verify all 86 tests pass with 90% coverage
+  - [x] Fix API attribute name - use transcript.sentiment_analysis (not sentiment_analysis_results)
+  - [x] Test with real audio file - confirmed 156 sentences analyzed successfully
+

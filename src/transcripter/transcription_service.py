@@ -13,7 +13,7 @@ from tenacity import (
 
 from .config import TranscripterConfig, get_config, get_correlation_id
 from .logging import get_logger
-from .models import SpeakerUtterance, TranscriptionResult
+from .models import SentimentResult, SpeakerUtterance, TranscriptionResult
 
 logger = get_logger(__name__)
 
@@ -44,15 +44,16 @@ class TranscripterService:
         wait=wait_exponential(multiplier=1, min=2, max=30),
         retry=retry_if_exception_type((ConnectionError, TimeoutError))
     )
-    def transcribe_file(self, audio_file_path: Path) -> TranscriptionResult:
+    def transcribe_file(self, audio_file_path: Path, enable_sentiment_analysis: bool = False) -> TranscriptionResult:
         """
         Transcribe an audio file with speaker diarization.
 
         Args:
             audio_file_path: Path to the audio file to transcribe
+            enable_sentiment_analysis: Enable sentiment analysis for each sentence
 
         Returns:
-            TranscriptionResult with speaker utterances
+            TranscriptionResult with speaker utterances and optional sentiment analysis
 
         Raises:
             TranscriptionError: If transcription fails
@@ -61,6 +62,7 @@ class TranscripterService:
         logger.info(
             "Starting transcription",
             audio_file=str(audio_file_path),
+            sentiment_analysis=enable_sentiment_analysis,
             correlation_id=correlation_id
         )
 
@@ -79,7 +81,7 @@ class TranscripterService:
                 speaker_labels=True,  # Enable speaker diarization
                 speakers_expected=None,  # Let AssemblyAI auto-detect speaker count
                 auto_highlights=True,  # Enable auto-highlights for better accuracy
-                sentiment_analysis=False,  # Disable to focus on accuracy
+                sentiment_analysis=enable_sentiment_analysis,  # Optional sentiment analysis
                 entity_detection=False,  # Disable to focus on accuracy
             )
 
@@ -101,11 +103,12 @@ class TranscripterService:
 
             # Process the results
             processing_time = int((time.time() - start_time) * 1000)
-            result = self._process_transcript(transcript, audio_file_path, processing_time)
+            result = self._process_transcript(transcript, audio_file_path, processing_time, enable_sentiment_analysis)
 
             logger.info(
                 "Transcription completed",
                 utterances_count=len(result.utterances),
+                sentiment_results_count=len(result.sentiment_results) if result.sentiment_results else 0,
                 processing_time_ms=processing_time,
                 correlation_id=correlation_id
             )
@@ -125,7 +128,8 @@ class TranscripterService:
         self,
         transcript: aai.Transcript,
         audio_file_path: Path,
-        processing_time_ms: int
+        processing_time_ms: int,
+        sentiment_analysis_enabled: bool = False
     ) -> TranscriptionResult:
         """Process AssemblyAI transcript into our format."""
         utterances = []
@@ -154,11 +158,28 @@ class TranscripterService:
                 )
                 utterances.append(speaker_utterance)
 
+        # Process sentiment analysis results if available
+        sentiment_results = None
+        if sentiment_analysis_enabled and hasattr(transcript, 'sentiment_analysis') and transcript.sentiment_analysis:
+            sentiment_results = []
+            for sentiment in transcript.sentiment_analysis:
+                sentiment_result = SentimentResult(
+                    text=sentiment.text,
+                    sentiment=sentiment.sentiment,  # type: ignore[arg-type]
+                    confidence=sentiment.confidence,
+                    start=sentiment.start,
+                    end=sentiment.end,
+                    speaker=getattr(sentiment, 'speaker', None)
+                )
+                sentiment_results.append(sentiment_result)
+            logger.info("Processed sentiment analysis results", count=len(sentiment_results))
+
         return TranscriptionResult(
             utterances=utterances,
             total_duration=transcript.audio_duration,
             processing_time_ms=processing_time_ms,
-            audio_file=audio_file_path
+            audio_file=audio_file_path,
+            sentiment_results=sentiment_results
         )
 
     def save_transcript(

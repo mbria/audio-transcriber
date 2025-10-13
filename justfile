@@ -4,18 +4,23 @@
 # Quick setup: just setup
 
 # Transcribe audio file to text (output file optional - defaults to same name with .txt extension)
-transcribe input_file output_file='':
-    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }}
+# Set sentiment='true' to enable sentiment analysis
+transcribe input_file output_file='' sentiment='false':
+    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} {{ if sentiment == "true" { "--sentiment" } else { "" } }}
 
 # Transcribe to SRT subtitle format (output file optional - defaults to same name with .srt extension)
-transcribe-srt input_file output_file='':
-    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --format srt
+# Set sentiment='true' to enable sentiment analysis
+transcribe-srt input_file output_file='' sentiment='false':
+    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --format srt {{ if sentiment == "true" { "--sentiment" } else { "" } }}
 
 # Transcribe with verbose logging for debugging (output file optional)
-transcribe-verbose input_file output_file='':
-    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --verbose
+# Set sentiment='true' to enable sentiment analysis
+transcribe-verbose input_file output_file='' sentiment='false':
+    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --verbose {{ if sentiment == "true" { "--sentiment" } else { "" } }}
 
-
+# Transcribe with sentiment analysis enabled (convenience recipe)
+transcribe-sentiment input_file output_file='':
+    uv run transcripter "{{input_file}}" {{ if output_file == "" { "" } else { '"' + output_file + '"' } }} --sentiment
 
 # Show help and usage examples
 help:

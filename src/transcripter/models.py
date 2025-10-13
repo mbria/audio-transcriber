@@ -1,8 +1,22 @@
 """Data models for transcription results."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field
+
+SentimentType = Literal["POSITIVE", "NEUTRAL", "NEGATIVE"]
+
+
+class SentimentResult(BaseModel):
+    """Sentiment analysis result for a text segment."""
+
+    text: str = Field(..., description="Text that was analyzed")
+    sentiment: SentimentType = Field(..., description="Detected sentiment")
+    confidence: float = Field(..., description="Confidence score (0-1)")
+    start: int = Field(..., description="Start time in milliseconds")
+    end: int = Field(..., description="End time in milliseconds")
+    speaker: str | None = Field(None, description="Speaker identifier if available")
 
 
 class SpeakerUtterance(BaseModel):
@@ -22,13 +36,27 @@ class TranscriptionResult(BaseModel):
     total_duration: int | None = Field(None, description="Total audio duration in seconds")
     processing_time_ms: int | None = Field(None, description="Processing time in milliseconds")
     audio_file: Path = Field(..., description="Path to the source audio file")
+    sentiment_results: list[SentimentResult] | None = Field(None, description="Sentiment analysis results if enabled")
 
     def to_transcript_text(self) -> str:
-        """Convert to readable transcript format."""
+        """Convert to readable transcript format with optional sentiment analysis."""
         lines = []
         for utterance in self.utterances:
             speaker_line = f"Speaker {utterance.speaker}: {utterance.text}"
             lines.append(speaker_line)
+
+        # Add sentiment analysis section if available
+        if self.sentiment_results:
+            lines.append("\n" + "="*60)
+            lines.append("SENTIMENT ANALYSIS")
+            lines.append("="*60)
+            for sentiment in self.sentiment_results:
+                sentiment_line = f"[{sentiment.sentiment}] (confidence: {sentiment.confidence:.2f})"
+                if sentiment.speaker:
+                    sentiment_line = f"Speaker {sentiment.speaker} - {sentiment_line}"
+                sentiment_line += f"\n{sentiment.text}"
+                lines.append(sentiment_line)
+
         return "\n\n".join(lines)
 
     def to_srt_format(self) -> str:

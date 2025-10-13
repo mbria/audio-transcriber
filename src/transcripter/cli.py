@@ -69,8 +69,10 @@ Examples:
   transcripter meeting.mp4 transcript.txt
   transcripter audio.wav output.srt --format srt
   transcripter /path/to/audio.mp3 /path/to/output.txt --verbose
+  transcripter interview.mp3 --sentiment
 
 Note: For multi-speaker audio, you'll be prompted to name speakers after transcription.
+      Use --sentiment to enable sentiment analysis (POSITIVE, NEGATIVE, NEUTRAL) for each sentence.
         """
     )
 
@@ -92,6 +94,12 @@ Note: For multi-speaker audio, you'll be prompted to name speakers after transcr
         choices=["txt", "srt"],
         default="txt",
         help="Output format: txt (default) or srt subtitle format"
+    )
+
+    parser.add_argument(
+        "--sentiment",
+        action="store_true",
+        help="Enable sentiment analysis for each sentence"
     )
 
     parser.add_argument(
@@ -155,7 +163,8 @@ def main() -> None:
         "Starting transcription",
         input_file=str(args.input_file),
         output_file=str(args.output_file),
-        format=args.format
+        format=args.format,
+        sentiment_analysis=args.sentiment
     )
 
     try:
@@ -164,7 +173,9 @@ def main() -> None:
 
         # Transcribe the file
         print(f"Transcribing {args.input_file}...")
-        result = service.transcribe_file(args.input_file)
+        if args.sentiment:
+            print("Sentiment analysis enabled - analyzing emotional tone of each sentence...")
+        result = service.transcribe_file(args.input_file, enable_sentiment_analysis=args.sentiment)
 
         # Save the transcript
         print(f"Saving transcript to {args.output_file}...")
@@ -206,6 +217,17 @@ def main() -> None:
             print(f"Audio duration: {result.total_duration} seconds ({duration_min:.2f} minutes)")
         if result.processing_time_ms:
             print(f"Processing time: {result.processing_time_ms}ms")
+
+        # Print sentiment analysis summary if available
+        if result.sentiment_results:
+            print("\nSentiment Analysis:")
+            print(f"  Total sentences analyzed: {len(result.sentiment_results)}")
+            sentiment_counts = {"POSITIVE": 0, "NEUTRAL": 0, "NEGATIVE": 0}
+            for sentiment in result.sentiment_results:
+                sentiment_counts[sentiment.sentiment] += 1
+            print(f"  POSITIVE: {sentiment_counts['POSITIVE']}")
+            print(f"  NEUTRAL: {sentiment_counts['NEUTRAL']}")
+            print(f"  NEGATIVE: {sentiment_counts['NEGATIVE']}")
 
         logger.info("Transcription completed successfully")
 

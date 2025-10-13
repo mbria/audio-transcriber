@@ -6,6 +6,7 @@ A speech-to-text utility with speaker diarization using AssemblyAI. Transcribe a
 
 - **Speaker Diarization**: Automatically identifies and attributes speech to different speakers
 - **Interactive Speaker Naming**: Rename speakers with contextual prompts for better readability
+- **Sentiment Analysis**: Optional analysis of emotional tone (POSITIVE, NEUTRAL, NEGATIVE) for each sentence
 - **Multiple Formats**: Supports MP3, MP4, WAV, M4A, AAC, FLAC, OGG, and WMA files
 - **Output Formats**: Generate transcripts in plain text or SRT subtitle format
 - **Robust Error Handling**: Built-in retry logic and comprehensive error reporting
@@ -38,20 +39,49 @@ A speech-to-text utility with speaker diarization using AssemblyAI. Transcribe a
    # Edit .env and add your AssemblyAI API key
    ```
 
-### Basic Usage
+### Basic Usage (Just Commands - Recommended)
+
+**Note**: All commands require your AssemblyAI API key to be configured in your `.env` file as `TRANSCRIPTER_ASSEMBLYAI_API_KEY`.
 
 ```bash
-# Transcribe a meeting recording (output file optional - defaults to same name with .txt extension)
+# Basic transcription (output goes to TRANSCRIPTER_OUTPUT_DIR)
+just transcribe "path/to/audio.m4a"
+
+# Enable sentiment analysis to detect emotional tone
+just transcribe-sentiment "interview.mp3"
+
+# Or use parameterized version for more control
+just transcribe "meeting.mp4" "" "true"  # sentiment=true
+
+# Generate SRT subtitles
+just transcribe-srt "path/to/audio.m4a"
+
+# SRT with sentiment analysis
+just transcribe-srt "interview.mp3" "" "true"
+
+# With verbose logging for debugging
+just transcribe-verbose "path/to/audio.m4a"
+
+# Show all available commands
+just --list
+```
+
+### Using CLI Directly (Alternative)
+
+If you prefer to use the CLI directly without just:
+
+```bash
+# Basic transcription
 uv run transcripter meeting.mp4
 
-# Or specify custom output file
-uv run transcripter meeting.mp4 transcript.txt
+# With sentiment analysis
+uv run transcripter interview.mp3 --sentiment
 
-# Generate SRT subtitles (output file optional - defaults to same name with .srt extension)
+# Generate SRT subtitles
 uv run transcripter audio.wav --format srt
 
-# Verbose output for debugging
-uv run transcripter audio.mp3 --verbose
+# Combine options
+uv run transcripter meeting.mp4 --sentiment --verbose
 ```
 
 ### Speaker Naming
@@ -137,6 +167,7 @@ Arguments:
 
 Options:
   --format [txt|srt]    Output format (default: txt)
+  --sentiment           Enable sentiment analysis for each sentence
   --verbose, -v         Enable verbose logging
   --version             Show version information
   --help               Show help message
@@ -166,6 +197,34 @@ Speaker A: Hello, how are you today?
 Speaker B: I'm doing well, thank you for asking.
 ```
 
+### With Sentiment Analysis
+
+When `--sentiment` is enabled, the transcript includes a sentiment analysis section:
+
+```
+Speaker A: Hello, how are you today?
+
+Speaker B: I'm doing well, thank you for asking.
+
+============================================================
+SENTIMENT ANALYSIS
+============================================================
+Speaker A - [POSITIVE] (confidence: 0.85)
+Hello, how are you today?
+
+Speaker B - [POSITIVE] (confidence: 0.92)
+I'm doing well, thank you for asking.
+```
+
+The CLI also displays a summary:
+```
+Sentiment Analysis:
+  Total sentences analyzed: 156
+  POSITIVE: 13
+  NEUTRAL: 110
+  NEGATIVE: 33
+```
+
 ## Docker Usage
 
 ### Build and Run
@@ -189,27 +248,9 @@ Create a `.env` file with your AssemblyAI API key:
 TRANSCRIPTER_ASSEMBLYAI_API_KEY=your_api_key_here
 ```
 
-## API Integration
+## Programmatic API Usage
 
-### Using Just Commands (Recommended)
-
-**Note**: All commands require your AssemblyAI API key to be configured in your `.env` file as `TRANSCRIPTER_ASSEMBLYAI_API_KEY`.
-
-```bash
-# Basic transcription (output goes to TRANSCRIPTER_OUTPUT_DIR)
-just transcribe "path/to/audio.m4a"
-
-# Generate SRT subtitles
-just transcribe-srt "path/to/audio.m4a"
-
-# With verbose logging
-just transcribe-verbose "path/to/audio.m4a"
-
-# Show all available commands
-just --list
-```
-
-### Using the Service Programmatically
+### Using the Service in Your Python Code
 
 ```python
 from transcripter.config import get_config
@@ -220,8 +261,11 @@ from pathlib import Path
 config = get_config()
 service = TranscripterService(config)
 
-# Transcribe file
-result = service.transcribe_file(Path("meeting.mp4"))
+# Transcribe file with optional sentiment analysis
+result = service.transcribe_file(
+    Path("meeting.mp4"),
+    enable_sentiment_analysis=True  # Optional: defaults to False
+)
 
 # Save transcript (will use default output directory and filename)
 output_path = config.output_dir / "meeting.txt"
@@ -230,6 +274,11 @@ service.save_transcript(result, output_path)
 # Access utterances
 for utterance in result.utterances:
     print(f"Speaker {utterance.speaker}: {utterance.text}")
+
+# Access sentiment results (if enabled)
+if result.sentiment_results:
+    for sentiment in result.sentiment_results:
+        print(f"[{sentiment.sentiment}] {sentiment.text} (confidence: {sentiment.confidence:.2f})")
 ```
 
 ## Quality Assurance
