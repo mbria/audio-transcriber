@@ -202,8 +202,8 @@ def main() -> None:
         print(f"Speakers detected: {len({utt.speaker for utt in result.utterances})}")
         print(f"Total utterances: {len(result.utterances)}")
         if result.total_duration:
-            duration_sec = result.total_duration / 1000
-            print(f"Audio duration: {duration_sec:.1f} seconds")
+            duration_min = result.total_duration / 60
+            print(f"Audio duration: {result.total_duration} seconds ({duration_min:.2f} minutes)")
         if result.processing_time_ms:
             print(f"Processing time: {result.processing_time_ms}ms")
 

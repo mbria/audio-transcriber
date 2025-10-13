@@ -19,7 +19,7 @@ class TranscriptionResult(BaseModel):
     """Complete transcription result with speaker diarization."""
 
     utterances: list[SpeakerUtterance] = Field(default_factory=list, description="List of speaker utterances")
-    total_duration: int | None = Field(None, description="Total audio duration in milliseconds")
+    total_duration: int | None = Field(None, description="Total audio duration in seconds")
     processing_time_ms: int | None = Field(None, description="Processing time in milliseconds")
     audio_file: Path = Field(..., description="Path to the source audio file")
 

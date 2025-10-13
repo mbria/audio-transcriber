@@ -38,7 +38,7 @@ class TestCLI:
         mock_utterance_b = MagicMock()
         mock_utterance_b.speaker = "Speaker B"
         mock_result.utterances = [mock_utterance_a, mock_utterance_b]
-        mock_result.total_duration = 5000
+        mock_result.total_duration = 5
         mock_result.processing_time_ms = 3000
         mock_service.transcribe_file.return_value = mock_result
 
@@ -83,7 +83,7 @@ class TestCLI:
         mock_utterance_b = MagicMock()
         mock_utterance_b.speaker = "Speaker B"
         mock_result.utterances = [mock_utterance_a, mock_utterance_b]
-        mock_result.total_duration = 5000
+        mock_result.total_duration = 5
         mock_result.processing_time_ms = 3000
         mock_service.transcribe_file.return_value = mock_result
 
@@ -120,7 +120,7 @@ class TestCLI:
         mock_utterance = MagicMock()
         mock_utterance.speaker = "Speaker A"
         mock_result.utterances = [mock_utterance]
-        mock_result.total_duration = 5000
+        mock_result.total_duration = 5
         mock_result.processing_time_ms = 3000
         mock_service.transcribe_file.return_value = mock_result
 
@@ -163,7 +163,7 @@ class TestCLI:
         mock_utterance = MagicMock()
         mock_utterance.speaker = "Speaker A"
         mock_result.utterances = [mock_utterance]
-        mock_result.total_duration = 5000
+        mock_result.total_duration = 5
         mock_result.processing_time_ms = 3000
         mock_service.transcribe_file.return_value = mock_result
 

@@ -91,3 +91,13 @@
   - [x] Add comprehensive test suite with 20 test cases
   - [x] Verify all 78 tests pass with 89.57% coverage
 
+## Audio Duration Display Bug Fix
+
+- [x] Fix incorrect audio duration display
+  - [x] Identify that AssemblyAI API returns audio_duration in seconds (not milliseconds)
+  - [x] Remove incorrect division by 1000 in CLI display logic
+  - [x] Update model documentation to reflect correct unit (seconds)
+  - [x] Update all test fixtures from millisecond values to second values
+  - [x] Add minutes display alongside seconds for better readability
+  - [x] Verify all 78 tests pass with 90% coverage
+

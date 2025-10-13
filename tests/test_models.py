@@ -47,13 +47,13 @@ class TestTranscriptionResult:
 
         result = TranscriptionResult(
             utterances=utterances,
-            total_duration=6000,
+            total_duration=6,
             processing_time_ms=1500,
             audio_file=Path("test.mp3")
         )
 
         assert len(result.utterances) == 2
-        assert result.total_duration == 6000
+        assert result.total_duration == 6
         assert result.processing_time_ms == 1500
         assert result.audio_file == Path("test.mp3")
 

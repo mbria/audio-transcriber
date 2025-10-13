@@ -48,7 +48,7 @@ class TestTranscripterService:
         mock_transcript = Mock()
         mock_transcript.status = aai.TranscriptStatus.completed
         mock_transcript.utterances = [mock_utterance]
-        mock_transcript.audio_duration = 5000
+        mock_transcript.audio_duration = 5
 
         # Mock transcriber instance
         mock_transcriber = Mock()
@@ -66,7 +66,7 @@ class TestTranscripterService:
         assert len(result.utterances) == 1
         assert result.utterances[0].speaker == "A"
         assert result.utterances[0].text == "Hello world"
-        assert result.total_duration == 5000
+        assert result.total_duration == 5
 
     def test_transcribe_file_not_found(self):
         """Test transcription with non-existent file."""
@@ -116,7 +116,7 @@ class TestTranscripterService:
 
         mock_transcript = Mock()
         mock_transcript.utterances = [mock_utterance]
-        mock_transcript.audio_duration = 5000
+        mock_transcript.audio_duration = 5
 
         # Test
         result = service._process_transcript(mock_transcript, Path("test.mp3"), 1500)
@@ -128,7 +128,7 @@ class TestTranscripterService:
         assert result.utterances[0].start == 1000
         assert result.utterances[0].end == 3000
         assert result.utterances[0].confidence == 0.95
-        assert result.total_duration == 5000
+        assert result.total_duration == 5
         assert result.processing_time_ms == 1500
 
     def test_process_transcript_fallback(self):
@@ -140,7 +140,7 @@ class TestTranscripterService:
         mock_transcript = Mock()
         mock_transcript.utterances = None
         mock_transcript.text = "Hello world"
-        mock_transcript.audio_duration = 5000
+        mock_transcript.audio_duration = 5
         mock_transcript.confidence = 0.95
 
         # Test
@@ -151,7 +151,7 @@ class TestTranscripterService:
         assert result.utterances[0].speaker == "A"  # Default speaker
         assert result.utterances[0].text == "Hello world"
         assert result.utterances[0].start == 0
-        assert result.utterances[0].end == 5000
+        assert result.utterances[0].end == 5
         assert result.utterances[0].confidence == 0.95
 
     def test_save_transcript_txt(self):
