@@ -77,3 +77,17 @@
   - [x] Add comprehensive tests for single speaker functionality
   - [x] Ensure backward compatibility with multi-speaker recordings
 
+## Enhanced Quote Handling for File Names
+
+- [x] Support various quote types in file names
+  - [x] Enhance strip_outer_quotes function to handle multiple quote types
+  - [x] Support standard quotes (", ')
+  - [x] Support backticks (`)
+  - [x] Support smart quotes (" " ' ')
+  - [x] Support guillemets (« » ‹ ›)
+  - [x] Support German-style quotes („ " ‚ ')
+  - [x] Preserve quotes within filenames (e.g., `A "really ugly" conversation.mp4`)
+  - [x] Strip only outer quotes from path arguments
+  - [x] Add comprehensive test suite with 20 test cases
+  - [x] Verify all 78 tests pass with 89.57% coverage
+

@@ -370,7 +370,7 @@ Speaker A: Let's start with an overview of the main features.
 
         assert result is True
         assert self.service.speakers["Speaker A"] == "Bob"
-        
+
         # Check that the single speaker message was displayed
         captured = capsys.readouterr()
         assert "Found 1 speaker: Speaker A" in captured.out

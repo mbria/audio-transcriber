@@ -13,15 +13,43 @@ logger = get_logger(__name__)
 
 
 def strip_outer_quotes(text: str) -> str:
-    """Strip outer quotes from a string if present."""
+    """
+    Strip outer quotes from a string if present.
+
+    Handles various quote types:
+    - Standard double quotes: "
+    - Standard single quotes: '
+    - Backticks: `
+    - Smart double quotes: " "
+    - Smart single quotes: ' '
+    - Guillemets: « »
+    - Other quote-like characters
+    """
     if not text:
         return text
-    
-    # Check for outer quotes and strip them
-    if len(text) >= 2:
-        if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
-            return text[1:-1]
-    
+
+    if len(text) < 2:
+        return text
+
+    # Define quote pairs (opening, closing)
+    # Using Unicode escapes for smart quotes to avoid syntax conflicts
+    quote_pairs = [
+        ('"', '"'),           # Standard double quotes
+        ("'", "'"),           # Standard single quotes
+        ('`', '`'),           # Backticks
+        ('\u201c', '\u201d'), # Smart double quotes " "
+        ('\u2018', '\u2019'), # Smart single quotes ' '
+        ('«', '»'),           # Guillemets
+        ('‹', '›'),           # Single guillemets
+        ('\u201e', '\u201c'), # German-style double quotes „ "
+        ('\u201a', '\u2019'), # German-style single quotes ‚ '
+    ]
+
+    # Check each quote pair
+    for opening, closing in quote_pairs:
+        if text.startswith(opening) and text.endswith(closing):
+            return text[len(opening):-len(closing)]
+
     return text
 
 
@@ -146,7 +174,7 @@ def main() -> None:
         speakers_detected = len({utt.speaker for utt in result.utterances})
         if speakers_detected > 0:  # Prompt for any number of speakers
             if speakers_detected == 1:
-                print(f"\nThere is only one speaker identified, would you like to customize the name label?")
+                print("\nThere is only one speaker identified, would you like to customize the name label?")
                 rename_choice = input("Would you like to name the speaker? [Y/n]: ").strip().lower()
             else:
                 print(f"\nFound {speakers_detected} speakers in the transcript.")
